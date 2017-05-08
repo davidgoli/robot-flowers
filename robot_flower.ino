@@ -4,14 +4,15 @@ const int stepsPerRevolution = 200;
 const int openSpeed = 20;
 const int closeSpeed = 60;
 
-const int numSamples = 1000;
+const int numSamples = 100;
+long samplesWritten = 0;
 int samples[numSamples];
 int normalizedSamples[numSamples];
 
 long closedMillis = 0;
 bool isOpen = false;
 const long closedDelay = 5000;
-const double threshold = 1.1;
+const double threshold = 1.4;
 
 Stepper myStepper(stepsPerRevolution, 2, 3, 4, 5);
 
@@ -25,6 +26,9 @@ void setup() {
 void loop() {
   sampleAudio();
   double amplitude = getAmplitude();
+  Serial.print(normalizedSamples[0]);
+  Serial.print(" ");
+  Serial.println(amplitude);
 
   long currentMillis = millis();
   if (amplitude > threshold) {
@@ -32,11 +36,11 @@ void loop() {
     closedMillis = currentMillis;
   }
 
-  if (!isOpen && currentMillis - closedMillis > closedDelay) {
+  if (currentMillis - closedMillis > closedDelay) {
     open();
   }
 
-  delayMicroseconds(10);
+  delayMicroseconds(100);
 }
 
 void initializeBuffer() {
@@ -68,30 +72,38 @@ void normalizeSamples(int samples[], int numSamples) {
 }
 
 void sampleAudio() {
-  for (int i=1; i<numSamples; i++) {
+  int i=numSamples;
+  while (i-- > 0) {
     samples[i] = samples[i-1];
   }
 
   samples[0] = analogRead(8);
+  samplesWritten = min(samplesWritten+1, numSamples);
 }
 
 double getAmplitude() {
-  normalizeSamples(samples, numSamples);
+  normalizeSamples(samples, samplesWritten);
 
-  return rmsValue(normalizedSamples, 1000);
+  return rmsValue(normalizedSamples, 10);
 }
 
 void open() {
+  if (isOpen) {
+    return;
+  }
+  isOpen = true;
   digitalWrite(LED_BUILTIN, HIGH);
   myStepper.setSpeed(openSpeed);
   myStepper.step(stepsPerRevolution);
-  isOpen = true;
 }
 
 void close() {
+  if (!isOpen) {
+    return;
+  }
+  isOpen = false;
   digitalWrite(LED_BUILTIN, LOW);
   myStepper.setSpeed(closeSpeed);
   myStepper.step(-stepsPerRevolution);
-  isOpen = false;
 }
 
