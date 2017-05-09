@@ -4,6 +4,10 @@ const int stepsPerRevolution = 200;
 const int openSpeed = 20;
 const int closeSpeed = 60;
 
+const int stepperPins[] = { 2, 3, 4, 5 };
+const int micPin = 8;
+const int potPin = 10;
+
 const int numSamples = 100;
 long samplesWritten = 0;
 int samples[numSamples];
@@ -12,22 +16,21 @@ int normalizedSamples[numSamples];
 long closedMillis = 0;
 bool isOpen = false;
 const long closedDelay = 5000;
-const double threshold = 1.4;
+double threshold = 1.4;
 
-Stepper myStepper(stepsPerRevolution, 2, 3, 4, 5);
+Stepper myStepper(stepsPerRevolution, stepperPins[0], stepperPins[1], stepperPins[2], stepperPins[3]);
 
 void setup() {
   initializeBuffer();
   myStepper.setSpeed(60);
   Serial.begin(9600);
-  pinMode(8, INPUT);
+  pinMode(micPin, INPUT);
+  pinMode(potPin, INPUT);
 }
 
 void loop() {
   sampleAudio();
   double amplitude = getAmplitude();
-  Serial.print(normalizedSamples[0]);
-  Serial.print(" ");
   Serial.println(amplitude);
 
   long currentMillis = millis();
@@ -40,7 +43,11 @@ void loop() {
     open();
   }
 
-  delayMicroseconds(100);
+  if (currentMillis % 10 == 0) {
+    const int potValue = analogRead(potPin);
+    threshold = (double)potValue * 0.005;
+    Serial.println(threshold);
+  }
 }
 
 void initializeBuffer() {
