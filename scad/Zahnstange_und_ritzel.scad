@@ -9,7 +9,7 @@ zahnzahl_ritzel=55;
 // Höhe der Zahnstange bis zur Wälzgeraden
 hoehe_stange=4;
 // Durchmesser der Mittelbohrung des Stirnrads
-bohrung_ritzel=5;
+bohrung_ritzel=6;
 // Breite der Zähne
 breite=5;
 // Eingriffswinkel, Standardwert = 20° gemäß DIN 867. Sollte nicht größer als 45° sein.
@@ -226,6 +226,8 @@ module stirnrad(modul, zahnzahl, breite, bohrung, eingriffswinkel = 20, schraegu
 						for (i = [0:1:z_loch]){
 							translate(kugel_zu_kart([rm,90,i*360/z_loch]))
 								circle(r = r_loch);
+                            translate(kugel_zu_kart([12,90,(i*360/z_loch + 45)]))
+                                circle(2);
 						}
 					}
 				}
