@@ -83,6 +83,24 @@ module lever_peg () {
   translate([-15,5,20]) rotate([90,0,0]) linear_extrude(10) circle(3);
 }
 
+module inner_lever_peg () {
+  translate([-15,5,20]) rotate([90,0,0]) linear_extrude(10) circle(2.5);
+}
+
+module lever_arm() {
+  hull() {
+    translate([-15,2.5,20]) rotate([90,0,0]) linear_extrude(5) circle(2.5);
+    translate([-55,2.5,20]) rotate([90,0,0]) linear_extrude(5) circle(2.5);
+  }
+}
+
+module lever () {
+    inner_lever_peg();
+    lever_arm();
+}
+
+lever();
+
 module effector_lever_sink () {
   lever_peg();
   translate([-10,0,5]) scale([1,1,1.5]) {
