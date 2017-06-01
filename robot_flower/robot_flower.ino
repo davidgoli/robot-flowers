@@ -1,6 +1,7 @@
 #include <Stepper.h>
 
 const int stepsPerRevolution = 200;
+const int openSteps = 100;
 const int openSpeed = 20;
 const int closeSpeed = 60;
 
@@ -31,7 +32,6 @@ void setup() {
 void loop() {
   sampleAudio();
   double amplitude = getAmplitude();
-  Serial.println(amplitude);
 
   long currentMillis = millis();
   if (amplitude > threshold) {
@@ -46,6 +46,10 @@ void loop() {
   if (currentMillis % 10 == 0) {
     const int potValue = analogRead(potPin);
     threshold = (double)potValue * 0.005;
+    Serial.print(amplitude);
+    Serial.print(" ");
+    Serial.print(isOpen ? 5 : 0);
+    Serial.print(" ");
     Serial.println(threshold);
   }
 }
@@ -80,7 +84,7 @@ void normalizeSamples(int samples[], int numSamples) {
 
 void sampleAudio() {
   int i=numSamples;
-  while (i-- > 0) {
+  while (--i > 0) {
     samples[i] = samples[i-1];
   }
 
@@ -101,7 +105,7 @@ void open() {
   isOpen = true;
   digitalWrite(LED_BUILTIN, HIGH);
   myStepper.setSpeed(openSpeed);
-  myStepper.step(stepsPerRevolution);
+  myStepper.step(openSteps);
 }
 
 void close() {
@@ -111,6 +115,6 @@ void close() {
   isOpen = false;
   digitalWrite(LED_BUILTIN, LOW);
   myStepper.setSpeed(closeSpeed);
-  myStepper.step(-stepsPerRevolution);
+  myStepper.step(-openSteps);
 }
 
