@@ -1,7 +1,7 @@
 #include <Stepper.h>
 
 const int stepsPerRevolution = 200;
-const int openSteps = 50;
+const int openSteps = 100;
 const int openSpeed = 20;
 const int closeSpeed = 60;
 
