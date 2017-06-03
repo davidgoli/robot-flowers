@@ -1,7 +1,7 @@
 #include <Stepper.h>
 
 const int stepsPerRevolution = 200;
-const int openSteps = 100;
+const int openSteps = 50;
 const int openSpeed = 20;
 const int closeSpeed = 60;
 
@@ -105,7 +105,7 @@ void open() {
   isOpen = true;
   digitalWrite(LED_BUILTIN, HIGH);
   myStepper.setSpeed(openSpeed);
-  myStepper.step(openSteps);
+  myStepper.step(-openSteps);
 }
 
 void close() {
@@ -115,6 +115,6 @@ void close() {
   isOpen = false;
   digitalWrite(LED_BUILTIN, LOW);
   myStepper.setSpeed(closeSpeed);
-  myStepper.step(-openSteps);
+  myStepper.step(openSteps);
 }
 

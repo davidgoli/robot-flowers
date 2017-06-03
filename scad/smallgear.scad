@@ -5,7 +5,7 @@ modul=1;
 // Laenge der Zahnstange
 laenge_stange=220;
 // Anzahl der Radzähne
-zahnzahl_ritzel=55;
+zahnzahl_ritzel=35;
 // Höhe der Zahnstange bis zur Wälzgeraden
 hoehe_stange=4;
 // Durchmesser der Mittelbohrung des Stirnrads
@@ -224,8 +224,6 @@ module stirnrad(modul, zahnzahl, breite, bohrung, eingriffswinkel = 20, schraegu
 					union(){
 						circle(r=(bohrung+r_loch)/2);
 						for (i = [0:1:z_loch]){
-							translate(kugel_zu_kart([rm,90,i*360/z_loch]))
-								circle(r = r_loch);
                             translate(kugel_zu_kart([10,90,(i*360/z_loch + 45)]))
                                 circle(2);
 						}
@@ -257,18 +255,14 @@ module stirnrad(modul, zahnzahl, breite, bohrung, eingriffswinkel = 20, schraegu
 	optimiert = Löcher zur Material-/Gewichtsersparnis bzw. Oberflächenvergößerung erzeugen, wenn Geometrie erlaubt (= 1, wenn wahr) */
 module zahnstange_und_rad (modul, laenge_stange, zahnzahl_ritzel, hoehe_stange, bohrung_ritzel, breite, eingriffswinkel=20, schraegungswinkel=0, zusammen_gebaut=true, optimiert=true) {
 
-	abstand = zusammen_gebaut? modul*zahnzahl_ritzel/2 : modul*zahnzahl_ritzel;
-	
-	zahnstange(modul, laenge_stange, hoehe_stange, breite, eingriffswinkel, -schraegungswinkel);
-	translate([0,abstand,0])
-		if (istgerade(zahnzahl_ritzel)) {
-			rotate(90 + 180/zahnzahl_ritzel)
-				stirnrad (modul, zahnzahl_ritzel, breite, bohrung_ritzel, eingriffswinkel, schraegungswinkel, optimiert);
-		}
-		else {
-			rotate(a=90) 
-				stirnrad (modul, zahnzahl_ritzel, breite, bohrung_ritzel, eingriffswinkel, schraegungswinkel, optimiert);
-		}
+    if (istgerade(zahnzahl_ritzel)) {
+        rotate(90 + 180/zahnzahl_ritzel)
+            stirnrad (modul, zahnzahl_ritzel, breite, bohrung_ritzel, eingriffswinkel, schraegungswinkel, optimiert);
+    }
+    else {
+        rotate(a=90) 
+            stirnrad (modul, zahnzahl_ritzel, breite, bohrung_ritzel, eingriffswinkel, schraegungswinkel, optimiert);
+    }
 }
 
 zahnstange_und_rad (modul, laenge_stange, zahnzahl_ritzel, hoehe_stange, bohrung_ritzel, breite, eingriffswinkel, schraegungswinkel, zusammen_gebaut, optimiert);
