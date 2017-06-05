@@ -5,9 +5,10 @@ const int openSteps = 100;
 const int openSpeed = 20;
 const int closeSpeed = 60;
 
-const int stepperPins[] = { 2, 3, 4, 5 };
+const int stepperPins[] = { 8, 9, 10, 11 };
 const int micPin = 8;
 const int potPin = 10;
+const int ledPin = 7;
 
 const int numSamples = 100;
 long samplesWritten = 0;
@@ -27,12 +28,14 @@ void setup() {
   Serial.begin(9600);
   pinMode(micPin, INPUT);
   pinMode(potPin, INPUT);
+  pinMode(ledPin, OUTPUT);
 }
 
 void loop() {
   sampleAudio();
   double amplitude = getAmplitude();
 
+  analogWrite(ledPin, 255);
   long currentMillis = millis();
   if (amplitude > threshold) {
     close();
@@ -106,6 +109,7 @@ void open() {
   digitalWrite(LED_BUILTIN, HIGH);
   myStepper.setSpeed(openSpeed);
   myStepper.step(-openSteps);
+  analogWrite(ledPin, 255);
 }
 
 void close() {
@@ -114,6 +118,7 @@ void close() {
   }
   isOpen = false;
   digitalWrite(LED_BUILTIN, LOW);
+  //analogWrite(ledPin, 0);
   myStepper.setSpeed(closeSpeed);
   myStepper.step(openSteps);
 }
